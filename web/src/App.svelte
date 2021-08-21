@@ -14,7 +14,7 @@
 		// 加载 ffmpeg wasm
 		Module()
 			.then((ffmpeg) => {
-				socket = new WebSocket("ws://127.0.0.1:8080/ws");
+				socket = new WebSocket("ws://" + location.host + "/ws");
 
 				socket.onclose = (e) => {
 					if (yuv_canvas) {
@@ -63,7 +63,7 @@
 
 	function open_decoder(ffmpeg, yuv_canvas) {
 		let videoSize = 0;
-		let LOG_LEVEL_WASM = 2;
+		let LOG_LEVEL_WASM = 1;
 		let IS_H265 = 0;
 		let videoCallback = ffmpeg.addFunction(function (
 			addr_y,
@@ -125,6 +125,7 @@
 			let u = YUVBuffer.allocPlane(uv_width, uv_height, u_data, uv_width);
 			let v = YUVBuffer.allocPlane(uv_width, uv_height, v_data, uv_width);
 			let frame = YUVBuffer.frame(format, y, u, v);
+			// webgl render the yuv420 data
 			yuv_canvas.drawFrame(frame);
 		},
 		"viiiiiiiii");
